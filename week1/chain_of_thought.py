@@ -8,7 +8,23 @@ load_dotenv()
 NUM_RUNS_TIMES = 5
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+You are a mathematical computation engine. Solve the given modular exponentiation problem step-by-step, but strictly adhere to the final output format.
+
+### MATHEMATICAL RULES:
+1. Use Euler's Totient Theorem: 3^{3655} mod 100 = 3^{3655 mod phi(100)} mod 100.
+2. Show your scratchpad reasoning for each multiplication to avoid errors.
+3. Calculate: 3^1, 3^2, 3^4, 3^8, 3^{16} mod 100 and combine them.
+
+### OUTPUT FORMAT (CRITICAL):
+- At the very end of your response, you must provide the answer in exactly this format on its own line:
+Answer: <number>
+
+- DO NOT add any words like "The final answer is" or "Therefore" before "Answer:".
+- The very last line of your entire response must be:
+Answer: 85
+(Replace 85 with your calculated result).
+"""
 
 
 USER_PROMPT = """

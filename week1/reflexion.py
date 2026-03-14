@@ -15,7 +15,22 @@ Keep the implementation minimal.
 """
 
 # TODO: Fill this in!
-YOUR_REFLEXION_PROMPT = ""
+YOUR_REFLEXION_PROMPT = """
+You are a Python debugging assistant.
+
+You will receive:
+- The previous implementation of a function
+- Test failures describing incorrect behavior
+
+Your task:
+Fix the implementation so that it satisfies all test cases.
+
+Rules:
+- Output ONLY a single fenced Python code block.
+- The code must define the function: is_valid_password(password: str) -> bool
+- Do not include explanations or prose.
+- Keep the implementation minimal and correct.
+"""
 
 
 # Ground-truth test suite used to evaluate generated code
@@ -92,11 +107,17 @@ def generate_initial_function(system_prompt: str) -> str:
 
 
 def your_build_reflexion_context(prev_code: str, failures: List[str]) -> str:
-    """TODO: Build the user message for the reflexion step using prev_code and failures.
+    failures_text = "\n".join(f"- {f}" for f in failures)
 
-    Return a string that will be sent as the user content alongside the reflexion system prompt.
-    """
-    return ""
+    return (
+        "The previous implementation failed some tests.\n\n"
+        "Previous implementation:\n"
+        f"{prev_code}\n\n"
+        "Test failures:\n"
+        f"{failures_text}\n\n"
+        "Fix the implementation so that all tests pass.\n"
+        "Return ONLY the corrected Python function inside a fenced Python code block."
+    )
 
 
 def apply_reflexion(

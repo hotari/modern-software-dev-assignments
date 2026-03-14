@@ -9,7 +9,21 @@ load_dotenv()
 NUM_RUNS_TIMES = 5
 
 # TODO: Fill this in! Try to get as close to 100% correctness across all runs as possible.
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+You are a careful math problem solver.
+
+Follow these rules strictly:
+
+1. Solve the problem step by step to avoid mistakes.
+2. Use the information given in the problem only.
+3. After reasoning, compute the final numeric result carefully.
+4. The LAST line of your output must be exactly in this format:
+
+Answer: <number>
+
+5. Do not include anything after the final answer line.
+6. Ensure the answer is mathematically correct.
+"""
 
 USER_PROMPT = """
 Solve this problem, then give the final answer on the last line as "Answer: <number>".

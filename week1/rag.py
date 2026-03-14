@@ -37,7 +37,28 @@ QUESTION = (
 
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+You are a precise Python coding assistant.
+
+Follow these rules strictly:
+
+1. Use ONLY the information provided in the Context section.
+2. Do NOT invent APIs, endpoints, or headers that are not in the context.
+3. Write clean and correct Python code.
+
+For the task:
+- Implement the requested function exactly as specified.
+- Use the documented Base URL and endpoint.
+- Call the API using requests.get.
+- Include the authentication header exactly as documented.
+- Raise an exception for non-200 responses using response.raise_for_status().
+- Return only the user's name as a string.
+
+Output format rules:
+- Output ONLY a single fenced Python code block.
+- Do NOT include explanations or text outside the code block.
+- Include required imports if necessary.
+"""
 
 
 # For this simple example
@@ -52,11 +73,13 @@ REQUIRED_SNIPPETS = [
 
 
 def YOUR_CONTEXT_PROVIDER(corpus: List[str]) -> List[str]:
-    """TODO: Select and return the relevant subset of documents from CORPUS for this task.
+    relevant_docs = []
 
-    For example, return [] to simulate missing context, or [corpus[0]] to include the API docs.
-    """
-    return []
+    for doc in corpus:
+        if "/users/" in doc or "Base URL" in doc or "X-API-Key" in doc:
+            relevant_docs.append(doc)
+
+    return relevant_docs
 
 
 def make_user_prompt(question: str, context_docs: List[str]) -> str:

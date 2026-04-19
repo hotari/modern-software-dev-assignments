@@ -24,20 +24,28 @@
     <div class="row">
       <label class="row"><input id="save_note" type="checkbox" checked /> Save as note</label>
       <button id="extract">Extract</button>
+      <button id="extract_llm">Extract LLM</button>
+      <button id="list_notes">List Notes</button>
     </div>
 
     <div class="items" id="items"></div>
+    <div class="items" id="notes"></div>
 
     <script>
       const $ = (sel) => document.querySelector(sel);
       const itemsEl = $('#items');
+      const notesEl = $('#notes');
       const btn = $('#extract');
-      btn.addEventListener('click', async () => {
+      const llmBtn = $('#extract_llm');
+      const listNotesBtn = $('#list_notes');
+
+      const handleExtract = async (endpoint) => {
         const text = $('#text').value;
         const save = $('#save_note').checked;
         itemsEl.textContent = 'Extracting...';
+        notesEl.innerHTML = '';
         try {
-          const res = await fetch('/action-items/extract', {
+          const res = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text, save_note: save }),
@@ -64,6 +72,32 @@
         } catch (err) {
           console.error(err);
           itemsEl.textContent = 'Error extracting items';
+        }
+      };
+
+      btn.addEventListener('click', () => handleExtract('/action-items/extract'));
+      llmBtn.addEventListener('click', () => handleExtract('/action-items/extract-llm'));
+
+      listNotesBtn.addEventListener('click', async () => {
+        itemsEl.innerHTML = '';
+        notesEl.textContent = 'Loading notes...';
+        try {
+          const res = await fetch('/notes');
+          if (!res.ok) throw new Error('Failed to fetch notes');
+          const notes = await res.json();
+          if (notes.length === 0) {
+            notesEl.innerHTML = '<p class="muted">No notes found.</p>';
+            return;
+          }
+          notesEl.innerHTML = '<h3>Notes</h3>' + notes.map(n => (
+            `<div class="item" style="border-bottom: 1px solid #eee; padding: 0.5rem 0; flex-direction: column; align-items: flex-start;">
+              <div class="muted">${n.created_at} (ID: ${n.id})</div>
+              <div style="white-space: pre-wrap;">${n.content}</div>
+            </div>`
+          )).join('');
+        } catch (err) {
+          console.error(err);
+          notesEl.textContent = 'Error loading notes';
         }
       });
 
